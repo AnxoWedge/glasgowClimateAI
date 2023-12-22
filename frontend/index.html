@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prediction</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css">
+    <style>
+      .resultadosfinais{
+        max-width: 600px;
+        margin: 1em auto;
+        padding: 5px;
+
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        grid-gap: 1em;
+        text-align: center;
+
+        border-radius: 10px;
+        box-shadow: 2px 2px rgba(0,0,0,0.2);
+      }
+      @media (max-width: 600px) {
+        .resultadosfinais{
+          grid-template-columns: repeat(1,1fr);
+        }
+        
+      }
+    </style>
+
+</head>
+<body>
+  <div class="container mt-5">
+      <h1>AI Prediction</h1>
+      <form id="prediction-form" class="form-horizontal" method="POST">
+        <div class="form-group">
+            <label for="tempMin" class="col-sm-2 control-label">Temp Min:</label>
+            <div class="col-sm-10">
+            <input type="text" class="form-control" name="tempMin" id="tempMin">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="tempMax" class="col-sm-2 control-label">Temp Max:</label>
+            <div class="col-sm-10">
+            <input type="text" class="form-control" name="tempMax" id="tempMax">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="cloudCover" class="col-sm-2 control-label">Cloud Cover:</label>
+            <div class="col-sm-10">
+            <input type="text" class="form-control" name="cloudCover" id="cloudCover">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="humidity" class="col-sm-2 control-label">Humidity:</label>
+            <div class="col-sm-10">
+            <input type="text" class="form-control" name="humidity" id="humidity">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="windSpeed" class="col-sm-2 control-label">Wind Speed:</label>
+            <div class="col-sm-10">
+            <input type="text" class="form-control" name="windSpeed" id="windSpeed">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="visibility" class="col-sm-2 control-label">Visibility:</label>
+            <div class="col-sm-10">
+            <input type="text" class="form-control" name="visibility" id="visibility">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-primary">Predict</button>
+        </div>
+      </div>
+    </form>
+    <section class="resultadosfinais">
+      <div >
+        <h2>Result:</h2>
+        <p id="result" class="lead"></p>
+        <p id="message"></p>
+      </div>
+      <div >
+        <h2>Iterations:</h2>
+        <p id="iterations" class="lead"></p>
+      </div>
+      <div >
+        <h2>Error Rate:</h2>
+        <p id="errorRate" class="lead"></p>
+      </div>
+    </section>
+  </div>
+
+
+
+   <!-- Load jQuery, the jQuery Form Plugin, and Bootstrap JS -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+   
+
+   <!-- Add a script to handle the form submission -->
+   <script>
+     $('#prediction-form').submit((e)=>{
+       e.preventDefault();
+      const formData = new FormData(document.getElementById('prediction-form'));
+      const data = {};
+      for (const [key, value] of formData.entries()) {
+        data[key] = value;
+      }
+      axios.post('http://localhost:3000/predict', data)
+        .then(response => {
+          document.getElementById('result').textContent = response.data.prediction;
+          document.getElementById('message').textContent = response.data.message;
+          document.getElementById('iterations').textContent = response.data.iterations;
+          document.getElementById('errorRate').textContent = response.data.errorRate;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+     });
+   </script>
+ </body>
+</html>
